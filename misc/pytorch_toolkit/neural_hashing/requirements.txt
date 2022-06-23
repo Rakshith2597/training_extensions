@@ -1,0 +1,9 @@
+numpy
+pandas
+torch
+torchvision
+matplotlib
+Pillow
+parameter
+openvino-dev[onnx]
+onnxruntime
