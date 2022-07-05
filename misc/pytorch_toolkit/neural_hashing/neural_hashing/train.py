@@ -21,14 +21,9 @@ from vectorHandle import shuffler  # file
 
 
 class Trainer():
-    '''
-    XYZ
-    '''
 
     def __init__(self, trainloader, testloader, start, encoder, classifier1, discriminator, discriminator_criterion, discriminator_optimizer, classifier_optimizer, ac1_loss_criterion, loss_criterion, encoder_optimizer, similarity_loss_dict, test_similarity_loss_dict, relational_loss_dict, test_relational_loss_dict, classifier_loss_dict, discriminator_loss_dict, hd_item, discTestAccuracyDict, classifierTestAccuracyDict, classes):
-        '''
-        XYZ
-        '''
+
         self.trainloader = trainloader
         self.testloader = testloader
         self.start = start
@@ -92,14 +87,11 @@ class Trainer():
                       test_relational_loss_mean, classifierTestAccuracyMean, discTestAccuracyMean)
 
     def epoch_train(self, data, i, similarity_loss, similarity_loss_temp, similarity_count_temp, similarity_count_full, relational_loss, relational_loss_temp, relational_count_temp, relational_count_full, classifier_loss, classifier_loss_temp, classifier_count_temp, classifier_count_full, discriminator_loss, discriminator_loss_temp, discriminator_count_temp, discriminator_count_full, hd_t0, hd_t1, hd_t2):
-        # if i > 4 :
-        # break
         input1, input2, labels, groundtruths1, groundtruths2 = data
 
         indexes0 = np.where(labels.numpy() == 0)[0].tolist()
         indexes1 = np.where(labels.numpy() == 1)[0].tolist()
         indexes2 = np.where(labels.numpy() == 2)[0].tolist()
-        # print(len(indexes0))
         if not len(indexes2) == batchSize:
             input1_new = torch.from_numpy(
                 np.delete(input1.numpy(), indexes2, 0))
@@ -115,14 +107,10 @@ class Trainer():
             input2).cuda(), Variable(labels).cuda()
         groundtruths1, groundtruths2 = Variable(
             groundtruths1).cuda(), Variable(groundtruths2).cuda()
-        # print(input1.shape)
         h1, x1 = self.encoder(input1)
         h2, x2 = self.encoder(input2)
-        # print(h1.shape)
-        # print(h2.shape)
-        #########################
-        ##### Discriminator #####
-        #########################
+        
+        # Discriminator
         if len(indexes0) > 0:
             d_h1 = h1[indexes0]
             d_h2 = h2[indexes0]
@@ -142,27 +130,21 @@ class Trainer():
             discriminator_count_temp += 1
             discriminator_count_full += 1
 
-        #################################
-        ##### AUXILARY CLASSIFIER1  #####
-        #################################
+        #Auxiliary Classifier 1
 
         pred = self.classifier1(x1)
         ac1_loss = self.ac1_loss_criterion(pred, groundtruths1)
 
         self.classifier1_optimizer.zero_grad()
-        # encoder_optimizer.zero_grad()
 
         ac1_loss.backward(retain_graph=True)
 
         self.classifier1_optimizer.step()
-        # encoder_optimizer.step()
 
         classifier_count_temp += 1
         classifier_count_full += 1
 
-        ###########################################
-        ##### CAUCHY LOSS 1 [t =2 vs t=1,t=0] #####
-        ###########################################
+        # CAUCHY LOSS 1 [t =2 vs t=1,t=0]
         torch.autograd.set_detect_anomaly(True)
         del(input1)
         del(input2)
@@ -188,13 +170,8 @@ class Trainer():
                   torch.min(s.float()).item())
             print("\nCO ", torch.max(torch.squeeze(cauchy_output)).item(),
                   torch.min(torch.squeeze(cauchy_output)).item())
-       # encoder_optimizer.zero_grad()
-        # loss.backward()
-        # encoder_optimizer.step()
 
-        #######################################
-        #####  CAUCHY LOSS 2 [t=1 vs t=0] #####
-        #######################################
+        # CAUCHY LOSS 2 [t=1 vs t=0]
 
         if not len(indexes2) == batchSize:
             cos = F.cosine_similarity(h1_new, h2_new, dim=1, eps=1e-6)
@@ -211,41 +188,13 @@ class Trainer():
                       torch.min(labels_2.float()).item())
                 print("\nCO ", torch.max(torch.squeeze(cauchy_output)).item(),
                       torch.min(torch.squeeze(cauchy_output)).item())
-
-            # encoder_optimizer.zero_grad()
-            # loss.backward()
-            # encoder_optimizer.step()
-
             relational_count_temp += 1
             relational_count_full += 1
-
-        # print("\n\n\n gradient started...\n\n")
-        # for name,param in encoder.named_parameters():
-        #     print(name))
-        #     print("Grad Output",torch.max(param.grad),torch.min(param.grad))
-        # print("\n\n\n gradient ended...\n\n")
-
-        # loss_count = 250  # number of ITERATIONS after which loss is shown
-        # if (i + 1) % loss_count == 0:
-        #    print('[%d, %d] Cauchy loss 1: %.3f Cauchy loss 2: %.3f' % (epoch + 1, i + 1, similarity_loss_temp/loss_count, relational_loss_temp/relational_count_temp))
-        #    similarity_loss_temp = 0
-        #    similarity_count_temp = 0
-        #    relational_loss_temp = 0
-        #    relational_count_temp = 0
-            # run_loss_temp = 0.0
-
-        # key = str((epoch+1))+"_"+str(i)
-
-        # loss_dict[epoch] = run_loss/i
-        # run_loss = 0.0
-        # similarity_loss = 0.0
-        # relational_loss = 0.0
 
         loss = loss1 + loss2
         self.encoder_optimizer.zero_grad()
         loss.backward()
         self.encoder_optimizer.step()
-        # scheduler.step()
 
         discriminator_loss += d_loss.item()/alpha
         discriminator_loss_temp += d_loss.item()/alpha
@@ -267,51 +216,39 @@ class Trainer():
         self.discriminator_loss_dict[self.curr_epoch] = discriminator_loss / \
             discriminator_count_full
 
-        ###############################
-
-        #SAVING WEIGHTS AND LOSS FILES#
-
-        ###############################
+        # SAVING WEIGHTS AND LOSS FILES
 
         encoder_path = os.path.join(
             dataStorePath, 'encoder-%d.pkl' % (self.epoch+1))
         torch.save(self.encoder.state_dict(), encoder_path)
-        # print("Saving encoder weights to ", encoder_path)
 
         classifier_path = os.path.join(
             (dataStorePath), 'classifier-%d.pkl' % (self.epoch+1))
         torch.save(self.classifier1.state_dict(), classifier_path)
-        # print("Saving classifier weights to ", classifier_path)
 
         disc_path = os.path.join(dataStorePath, 'disc-%d.pkl' % (self.epoch+1))
         torch.save(self.discriminator.state_dict(), disc_path)
-        # print("Saving discriminator weights to ", disc_path)
 
         self.hd_item[self.epoch] = (hd_t0/i, hd_t1/i, hd_t2/i)
         hd_path = os.path.join(dataStorePath, 'hd_log.pkl')
         with open(hd_path, 'wb') as handle:
             pickle.dump(self.hd_item, handle)
-        # print("Saving hamming distance log to ", hd_path)
 
         loss_log_path = os.path.join(dataStorePath, 'c1_loss_log.pkl')
         with open(loss_log_path, 'wb') as handle:
             pickle.dump(self.similarity_loss_dict, handle)
-        # print("Saving Cauchy1 loss log to ", loss_log_path)
 
         loss_log_path = os.path.join(dataStorePath, 'ac1_loss_log.pkl')
         with open(loss_log_path, 'wb') as handle:
             pickle.dump(self.classifier_loss_dict, handle)
-        # print("Saving Auxilary Classifier loss log to ", loss_log_path)
 
         loss_log_path = os.path.join(dataStorePath, 'c2_loss_log.pkl')
         with open(loss_log_path, 'wb') as handle:
             pickle.dump(self.relational_loss_dict, handle)
-        # print("Saving Cauchy2 loss log to ", loss_log_path)
 
         loss_log_path = os.path.join(dataStorePath, 'disc_loss_log.pkl')
         with open(loss_log_path, 'wb') as handle:
             pickle.dump(self.discriminator_loss_dict, handle)
-        # print("Saving Discriminator loss log to ", loss_log_path)
 
         return similarity_loss, similarity_loss_temp, similarity_count_temp, similarity_count_full, relational_loss, relational_loss_temp, relational_count_temp, relational_count_full, classifier_loss, classifier_loss_temp, classifier_count_temp, classifier_count_full, discriminator_loss, discriminator_loss_temp, discriminator_count_temp, discriminator_count_full, hd_t0, hd_t1, hd_t2
 
@@ -331,8 +268,6 @@ class Trainer():
 
                 print('\n Testing ....')
                 for t_i, t_data in enumerate(self.testloader):
-                    # if t_i > 10:
-                    #     break
 
                     t_input1, t_input2, t_labels, t_gt1, t_gt2 = t_data
                     t_indexes = np.where(t_labels.numpy() == 0)[0].tolist()
@@ -376,22 +311,7 @@ class Trainer():
                     _, predicted = torch.max(t_pred.data, 1)
                     ac1_total += len(t_gt1)
                     ac1_correct += (predicted == t_gt1).sum().cpu().numpy()
-                    '''
-                    acc_all = (predicted == t_gt1).float().mean()
-                    
-                    acc = [0 for c in range(len(classes))]
-                    for c in range(len(classes)):
-                        #print(c)
-                        acc[c] = ((predicted == t_gt1) * (t_gt1 == c)).float() / torch.Tensor(max(t_gt1 == c).sum(), 1)
-                    '''
-                    '''for t_gt1, prediction in zip(t_gt1, predicted):
-                    if t_gt1 == prediction:
-                        correct_pred[classes[t_gt1]] += 1
-                    total_pred[classes[t_gt1]] += 1
-
-                    for t, p in zip(t_gt1.view(-1), predicted.view(-1)):
-                            confusion_matrix[t.long(), p.long()] += 1'''
-
+                   
                     cos = F.cosine_similarity(h1_t, h2_t, dim=1, eps=1e-6)
                     dist = F.relu((1-cos)*zSize/2)
                     cauchy_output = torch.reciprocal(dist+gamma)*gamma
@@ -428,12 +348,10 @@ class Trainer():
                     del(t_input1)
                     del(t_input2)
 
-                #print('Classification Accuracy of the network on the test images: %.5f \n\n' % ((100.0*correct) / total))
                 print('Classification Accuracy over test images: %.5f' %
                       ((100.0*ac1_correct) / ac1_total))
                 print('Discriminator Accuracy over test images: %.5f' %
                       ((100.0*d_correct) / d_total))
-                # print('C2 Classification Accuracy of the network on the test images: %.5f' % ((100.0*c2_correct) / c2_total))
 
                 self.test_similarity_loss_dict[self.curr_epoch] = t_loss1/t_i
                 print("Testing loss1: %.5f" % (t_loss1/t_i))
@@ -479,10 +397,6 @@ class Trainer():
                   )
         torch.backends.cudnn.benchmark = True
 
-        #from ray import tune
-        #from ray.tune import CLIReporter
-        #from ray.tune.schedulers import ASHAScheduler
-
         os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 
         encoder = Encoder(zSize)
@@ -493,7 +407,6 @@ class Trainer():
             encoder.cuda()
             classifier1.cuda()
             discriminator.cuda()
-        # print(encoder)
 
         load_model = False
 
@@ -502,16 +415,6 @@ class Trainer():
             start = 1
             model_path = "/storage/asim/trainingDmcCD/extra/encoder-100.pkl"
             encoder.load_state_dict(torch.load(model_path))
-            '''Classifier1.load_state_dict(torch.load("/storage/asim/trainingDmcCD/train(0.00005)/classifier1-1.pkl"))
-            Classifier1.load_state_dict(torch.load("/storage/asim/trainingDmcCD/train(0.00005)/classifier2-1.pkl"))
-            loss_dict = pickle.load(open("/storage/asim/trainingDmcCD/train(0.00005)/loss_log.pkl", "rb"))
-            similarity_loss_dict = pickle.load(open("/storage/asim/trainingDmcCD/train(0.00005)/c1_loss_log.pkl", "rb"))
-            relational_loss_dict = pickle.load(open("/storage/asim/trainingDmcCD/train(0.00005)/c2_loss_log.pkl", "rb"))
-            c1_acc_dict = pickle.load(open("/storage/asim/trainingDmcCD/train(0.00005)/c1_acc_log.pkl", "rb"))
-            c2_acc_dict = pickle.load(open("/storage/asim/trainingDmcCD/train(0.00005)/c2_acc_log.pkl", "rb"))
-            test_loss_dict = pickle.load(open("/storage/asim/trainingDmcCD/train(0.00005)/test_loss_log.pkl", "rb"))
-            hd_item = pickle.load(open("/storage/asim/trainingDmcCD/train(0.00005)/hd_log.pkl", "rb"))
-        '''
         else:
             model_path = '/storage/asim/trainingDmcCD/extra/encoder-100.pkl'
             encoder.load_state_dict(torch.load(model_path), strict=False)
@@ -533,7 +436,6 @@ class Trainer():
 
         plt.ion()
 
-        # torch.use_deterministic_algorithms(True)
         def seed_worker(worker_id):
             worker_seed = torch.initial_seed() % 2**32
             np.random.seed(worker_seed)
@@ -544,16 +446,12 @@ class Trainer():
 
         transform = transforms.Compose([
             transforms.Resize((28, 28), interpolation=2),
-            # transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
         ])
 
         trainset = Dataloder_img(
             trainingDataPath, transform=transform, target_transform=None)
         print(len(trainset))
-        #sampler = oversample(trainingDataPath)
-        # print(len(sampler))
-
         trainloader = torch.utils.data.DataLoader(
             trainset, shuffle=True,  batch_size=batchSize, num_workers=4)
         testset = Dataloder_img(
@@ -573,7 +471,6 @@ class Trainer():
             classifier1.parameters(), lr=learningRate, eps=0.0001, amsgrad=True)
         discriminator_optimizer = optim.Adam(
             discriminator.parameters(), lr=learningRate/10, eps=0.0001, amsgrad=True)
-        #scheduler = optim.lr_scheduler.StepLR(encoder_optimizer, step_size=10, gamma=0.1)
 
         encoder.train()
 
@@ -582,9 +479,7 @@ class Trainer():
             if(d != 'New_class'):
                 classes.append(d)
         classes = sorted(classes)
-        # classes.append('New_class')
         cls_to_idx = {classes[i]: i for i in range(len(classes))}
-        # print(cls_to_idx)
         start = 1
 
         trainer = Trainer(trainloader, testloader, start, encoder, classifier1, discriminator, discriminator_criterion, discriminator_optimizer, classifier1_optimizer, ac1_loss_criterion, loss_criterion, encoder_optimizer,
