@@ -4,27 +4,17 @@ import numpy as np
 
 
 def shuffler(h1, h2):
-    # print("Shuffler",h1.size(0))
-    #print("1", h1.size(1))
-    #print("2;", h2.size(1))
-    #print("2:", h2.size(0))
-    # 1 means keeping h1 and 0 means keeping h2
     sh = torch.randint(0, 2, (h1.size(0),))
-    # print(sh)
     h1new = torch.matmul(torch.diag(1-sh).float(), h2.cpu()) + \
         torch.matmul(torch.diag(sh).float(), h1.cpu())
     h2new = torch.matmul(torch.diag(1-sh).float(), h1.cpu()) + \
         torch.matmul(torch.diag(sh).float(), h2.cpu())
-    # print(h1new.shape)
-    # print(h2new.shape)
     return h1new.cuda(), h2new.cuda(), sh
 
 
 def precision(q_class, ret_classes):
     initlist = [int(q_class == i) for i in ret_classes]
-    # print(initlist)
     den = np.sum(initlist)
-    # print(den)
     if den == 0:
         return 0
     x = 0
@@ -32,15 +22,11 @@ def precision(q_class, ret_classes):
     for idx, pts in enumerate(initlist):
         x += pts  # rel(n)
         preclist[idx] = x/(idx+1)  # rel(n)/k
-    # print(preclist)
     num = np.dot(preclist, initlist)
-    # print(num)
-    # print(num/den)
     return num/den
 
 
 def imagenormalize(img):
-    # print(img.shape)
     img = img.astype(np.float32)  # converting array of ints to floats
     img_a = img[0, :, :]
     img_b = img[1, :, :]
@@ -78,8 +64,6 @@ def rescale_vector(width, vec, sf):
     x_plus = F.interpolate(x_plus, scale_factor=sf)
     return x_plus
 
-# print("a")
-
 
 def re_classes(sorted_pool, q_name):
     value = []
@@ -103,3 +87,4 @@ def discountedCumulativeGain(result):
         score = numerator/denominator
         dcg.append(score)
     return sum(dcg)
+
