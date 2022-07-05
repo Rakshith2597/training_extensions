@@ -10,13 +10,6 @@ class Exporter:
         self.config = config
         self.checkpoint = config.get('checkpoint')
 
-        '''if optimised:
-            alpha =  self.config['alpha'] ** self.config['phi']
-            beta = self.config['beta'] ** self.config['phi']
-            self.model = DenseNet121Eff(alpha, beta, self.config["class_count"])
-        else:
-            self.model = DenseNet121(class_count = 3)'''
-
         if nnumber == 1:
             self.model = Encoder(self)
         elif nnumber == 2:
@@ -26,7 +19,8 @@ class Exporter:
 
         self.model.eval()
         load_checkpoint(self.model, self.checkpoint)
-
+        
+        
     def export_model_ir(self):
         input_model = os.path.join(os.path.split(self.checkpoint)[
                                    0], self.config.get('model_name_onnx'))
@@ -42,6 +36,7 @@ class Exporter:
             print(export_command)
         subprocess.run(export_command, shell=True, check=True)
 
+        
     def export_model_onnx(self):
         print(f"Saving model to {self.config.get('model_name_onnx')}")
         res_path = os.path.join(os.path.split(self.checkpoint)[
@@ -53,3 +48,5 @@ class Exporter:
                           dynamic_axes={'input': {0: 'batch_size'},
                                         'output': {0: 'batch_size'}},
                           verbose=False)
+
+        
