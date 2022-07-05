@@ -35,7 +35,6 @@ class Encoder(nn.Module):
         y = self.conv2(y)
         y = self.relu2(y)
         y = self.pool2(y)
-        #y = y.view(y.shape[0], -1)
 
         y = self.fc1(y)
         y = self.relu3(y)
@@ -43,25 +42,21 @@ class Encoder(nn.Module):
         y = self.relu4(y)
         y = self.fc3(y)
         y = self.relu5(y)
-        # return y
 
         x_c = F.relu(self.fc1(y))  # x
         x_out = torch.tanh(self.fc2(x_c))  # h
-        # print(x_c)
-        # print(x_out)
-        return x_out, x_c  # ,indices1,indices2,indices3
+
+        return x_out, x_c
 
 
 class Classifier1(nn.Module):
     def __init__(self, numclasses):
         super(Classifier1, self).__init__()
-        # self.conv1d = nn.Conv1d(2,1,1)
         self.fc1 = nn.Linear(120, 84)
         self.fc2 = nn.Linear(84, 64)
         self.fc3 = nn.Linear(64, numclasses)
 
     def forward(self, x):
-        # x = F.relu(self.conv1d(x))
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.log_softmax(self.fc3(x), dim=0)
@@ -74,12 +69,10 @@ class Discriminator(nn.Module):
         self.conv1d = nn.Conv1d(2, 1, 1)
         self.fc1 = nn.Linear(zsize, 32)
         self.fc3 = nn.Linear(32, 1)
-        #self.fc4 = nn.Linear(128, 1)
 
     def forward(self, x):
         x = F.relu(self.conv1d(x))
         x = F.relu(self.fc1(x))
-        #x = F.relu(self.fc3(x))
         x = self.fc3(x)
         return x
 
