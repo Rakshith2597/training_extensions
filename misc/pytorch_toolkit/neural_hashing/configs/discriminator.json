@@ -1,0 +1,36 @@
+{
+    "train":{
+        "lr":1e-4,
+        "clscount":4,
+        "dummy_train_list":["Breast_0_64.npy","Chestxray_0_44.npy","Oct_0_596.npy","Tissue_1_483.npy"],
+        "dummy_valid_list":["Breast_0_85.npy","Chestxray_6_8988.npy"],
+        "dummy_test_list":["Oct_0_851.npy","Tissue_2_32155.npy"],
+        "dummy_labels":{"Breast_0_64.npy": 0,"Chestxray_0_44.npy": 1,"Oct_0_596.npy": 2,"Tissue_1_483.npy": 3,"Breast_0_85.npy": 0,"Chestxray_6_8988.npy": 1,"Oct_0_851.npy": 2,"Tissue_2_32155.npy": 3},
+        "class_names":["Breast","Chestxray","Oct", "Tissue"],
+        "checkpoint":"model_weights/encoder-100.pkl",
+        "device":"cuda",
+        "max_epoch":3,
+        "savepath":"model_weights",
+        "default_image_path":"dataset/gallery/Breast_0_371.npy",
+        "image_path":"dataset/gallery"
+    },
+    "test":{
+        "checkpoint": "model_weights/encoder-100.pkl",
+        "clscount": 4,
+        "dummy_valid_list":["Breast_1_131.npy","Chestxray_9_1970","Oct_0_72818.npy","Tissue_6_37014.npy"],
+        "dummy_labels":{"Breast_1_131.npy": 0,"Chestxray_9_1970": 1,"Oct_0_72818.npy": 2,"Tissue_6_37014.npy": 3},
+        "class_names":["Breast","Chestxray","Oct", "Tissue"],
+        "target_metric":0.55,
+        "model_name_onnx": "chest_xray_screening.onnx",
+        "input_shape":[1, 3, 1024, 1024],
+        "default_image_path":"/mnt/external_test_data/chest_xray_screening",
+        "image_path":"test_data/chest_xray_data"
+
+    },
+    "export":{
+        "checkpoint": "model_weights/chest_xray_screening.pth",
+        "input_shape":[1, 3, 1024, 1024],
+        "model_name_onnx": "chest_xray_screening.onnx",
+        "model_name":"chest_xray_screening"
+    }
+}
