@@ -71,23 +71,58 @@ Inference models will be made available in the [open_model_zoo](https://github.c
 5. **tests** directory contains  unittests.
 6. **config** directory contains model configs.
 
+
+### Create environment
+```
+sh init_venv.sh
+source venv/bin/activate
+```
+
+## How to run Stage 1
+Follow the below steps to reproduce
+
+### Prepare Training Dataset
+
+```
+python -m mammogram_screening.stage1.data_prep_rbis
+
+```
+
+### Run Training
+
+```
+python -m mammogram_screening.stage1.train_stage1
+```
+
+### Run Inference
+
+```
+python -m mammogram_screening.stage1.inference_mass_localisation
+```
+
+### How to run Stage 2
+
+### Prepare Training Dataset
+
+```
+python -m mammogram_screening.stage2.step2_get_predictions_for_all
+python -m mammogram_screening.stage2.step3_get_patches
+```
+### Run Training
+
+```
+python -m mammogram_screening.stage2.train_stage2
+
+```
+
+### Run Inference
+```
+python -m mammogram_screening.stage2.inference_stage2
+```
+
 ## **Run Tests**
 
 Necessary unit tests have been provided in the tests directory. The sample/toy dataset to be used in the tests can also be downloaded from [here](http://miriad.digital-health.one/sample_data/bmi5/rbis_ddsm_sample.zip).
-
-## How to run
-Follow the below steps to reproduce
-
-1. Create virtual environment: sh init_venv.sh
-2. Activate venv: source venv/bin/activate
-3. Create dataset: python -m mammogram_screening.stage1.data_prep_rbis
-4. Train stage1 model: python -m mammogram_screening.stage1.train_stage1
-5. Inference on stage 1 model: python -m mammogram_screening.stage1.inference_mass_localisation
-6. Prepare dataset (step1): python -m mammogram_screening.stage2.step2_get_predictions_for_all
-7. Prepare dataset (step2): python -m mammogram_screening.stage2.step3_get_patches
-8. Train stage2 model: python -m mammogram_screening.stage2.train_stage2
-9. Inference on stage 2 model: python -m mammogram_screening.stage2.inference_stage2
-
 
 ## **Acknowledgement**
 

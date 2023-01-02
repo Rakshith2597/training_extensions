@@ -10,7 +10,7 @@ Figure below shows the overall schematic diagram of the compression engine propo
 
 ## Network Architecture
 
-|
+
 ### Architecture of the Lossy Compressor
 
 <img src = "./media/encoder_arch.webp" width=650>
@@ -63,7 +63,6 @@ Note: The ONNX and IR representation models accepts inputs of fixed size mention
 
 ## Code and Directory Organisation
 
-
 ```
 radiology_compression/
 	src/
@@ -105,6 +104,58 @@ radiology_compression/
 
 5. **tests** directory contains  unit tests.
 6. **config** directory contains model configurations for the network.
+
+## How to Run
+
+### Prepare the Training Dataset
+
+```
+python src/utils/data_prep.py -p absolute/path/to/dataset/directory -d dimension_of_patch --out_train path/to/save/train_samples --out_test path/to/save/test_samples  --report
+```
+
+### Run Training
+
+Run the `train.py` script:
+```
+python train.py \
+  --traindata path/to/train/data
+  --testdata path/to/test/data
+  -b batch_size
+  -e epoch
+  --gpu 
+  -i interval_to_print_results
+  -s size of the randomly selected subset
+  --model_file_name Name of model and log files
+  --randomize_subset Randomize selected subset in every epoch
+  -d no of conv blocks in the architecture
+  -w no of Filters per conv
+  -p flexibilty factor for computation power
+  --efficient_net active efficientNet based scaling
+  --iterate Grid search iterations for alpha-beta
+  -p Select phase 1 or phase 2
+```
+
+## How to Perform Prediction
+
+### Run Inference
+```
+python inference.py \
+  -m path_to_model_file
+  --inferdata path/to/folder/containing/fullsize/images
+  -t Required bit depth for Float2Int quantization
+  --gpu
+  --with_aac Use Adaptive Arithmatic Coding (Huffman coding)
+  -l Write latent code tensor (integer) as output (possibly along huffman codebook)
+  -d Write decompressed images as output
+  --out_latent Folder to produce the latent codes into ?
+  --out_decom Folder to produce decompressed images into ?
+  -p Path for the output json file
+  --depth no of conv blocks in the architecture
+  --width No of filters
+  -x limit the number of samples to use for inference
+  -ph Select phase
+
+```
 
 
 ### Run Tests
