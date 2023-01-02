@@ -106,15 +106,32 @@ Necessary unit tests have been provided in the tests directory. The sample/toy d
 ## How to run
 Follow the below steps to reproduce
 
-1. Create virtual environment: sh init_venv.sh
-2. Activate venv: source venv/bin/activate
-3. Copy original dataset: extract the downloaded dataset zip file and paste it under the "breast_ultrasound_simulation/stage1/" folder.
-4. Prepare dataset (Step 1): python -m breast_ultrasound_simulation.stage1.original_images_and_masks
-5. Prepare dataset (Step 2): python -m breast_ultrasound_simulation.stage1.stage_0_masks
-6. Prepare dataset (Step 3): python -m breast_ultrasound_simulation.stage1.final_dataset_images_and_masks
-7. Train stage1 model: python -m breast_ultrasound_simulation.stage1.src.train
-8. Inference on stage 1 model: python -m breast_ultrasound_simulation.stage1.src.demo_kernel_dilation
+### Create Environments
+```
+sh init_venv.sh
+source venv/bin/activate
+```
+### Prepare datasets
 
+```
+Copy original dataset: extract the downloaded dataset zip file and paste it under the "breast_ultrasound_simulation/stage1/" folder.
+
+python -m breast_ultrasound_simulation.stage1.original_images_and_masks
+
+python -m breast_ultrasound_simulation.stage1.stage_0_masks
+
+python -m breast_ultrasound_simulation.stage1.final_dataset_images_and_masks
+```
+
+### Run Training
+```
+python -m breast_ultrasound_simulation.stage1.src.train
+```
+
+### Run Inference
+```
+python -m breast_ultrasound_simulation.stage1.src.demo_kernel_dilation
+```
 
 ## **Acknowledgement**
 
