@@ -1,4 +1,4 @@
-# Neural Compression Engine for Radiology Image
+# Designing Deep Neural High-Density Compression Engines for Radiology Images
 
 As a speciality, radiology produces the highest volume of medical images in clinicalestablishments compared to other commonly employed imaging modalities like dig-ital pathology, ophthalmic imaging, etc. 
 Archiving this massive quantity of imageswith large ﬁle sizes is a major problem since the costs associated with storing medicalimages continue to rise with an increase in cost of electronic storage devices. 
@@ -7,6 +7,23 @@ One ofthe possible solutions is to compress them for effective storage. The prim
 Figure below shows the overall schematic diagram of the compression engine proposed in <a href="#comp_journal">[1]</a>
 <img src = "./media/overall_arch.webp" width=650>
 
+> **Paper**: </Br>
+Raj, Aditya and Sathish, Rakshith and Sarkar, Tandra and Sethuraman, Ramanathan and Sheet, Debdoot; Designing Deep Neural High-Density Compression Engines for Radiology Images; In Circuits, Systems, and Signal Processing, Springer., 2022. </Br>_Access the paper via_ [**Springer**](https://link.springer.com/article/10.1007/s00034-022-02222-0)
+
+BibTeX reference to cite, if you use it:
+```bibtex
+@article{raj2023designing,
+  title={Designing Deep Neural High-Density Compression Engines for Radiology Images},
+  author={Raj, Aditya and Sathish, Rakshith and Sarkar, Tandra and Sethuraman, Ramanathan and Sheet, Debdoot},
+  journal={Circuits, Systems, and Signal Processing},
+  volume={42},
+  number={2},
+  pages={643--682},
+  year={2023},
+  publisher={Springer}
+}
+
+```
 
 ## Network Architecture
 
@@ -35,8 +52,6 @@ The compressed bitstream (BnetC,I) is subsequently fed to the decompressor(netD(
 
 3. Finally the output conditioning is implemented as $net(OCU)D(·)→ 4s3w1s1p → PixelShuffle$.
 
-
-
 ## Results
 
 The overall performance of the proposed compressor decompressor model is 
@@ -46,15 +61,13 @@ The modality specific performance of the proposed compressor decompressor model 
 
 <img src = "./media/modality_specific_performance.png" width=650>
 
-## Model
+## Trained Models
 
 Download `.pth` checkpoint for low and high density compression model trained on CBIS-DDSM dataset with the following [link](http://kliv.iitkgp.ac.in/projects/miriad/model_weights/bmi34/high_low/weights.zip).
 
-Inference models will be made available in the [open_model_zoo](https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/public) as well.
+>**Note:** The ONNX and IR representation models accepts inputs of fixed size mentioned in configuration file. This needs to be updated based on the input size.
 
-Note: The ONNX and IR representation models accepts inputs of fixed size mentioned in configuration file. This needs to be updated based on the input size.
-
-## Setup
+## System Specifications
 
 * Ubuntu 20.04
 * Python 3.8
@@ -157,8 +170,7 @@ python inference.py \
 
 ```
 
-
-### Run Tests
+## Run Tests
 
 Necessary unit tests have been provided in the tests directory. The sample/toy dataset to be used in the tests can also be downloaded from [here](http://kliv.iitkgp.ac.in/projects/miriad/sample_data/bmi34/phase1/phase1.zip) and [here](http://kliv.iitkgp.ac.in/projects/miriad/sample_data/bmi34/phase2/phase2.zip).
 
