@@ -19,7 +19,7 @@ class Fully_Connected_Layer(nn.Module):
         ftr_lyr=nn.ModuleList()
         cls_lyr=nn.ModuleList()
 
-        for _ in range(0,14):
+        for _ in range(0,15):
             ftr_lyr.append(
                 nn.Sequential(
                     nn.Linear(inp_dim, ftr_dim, bias=False),
@@ -42,7 +42,7 @@ class Fully_Connected_Layer(nn.Module):
     def forward(self, x):
         prd_lst=[]
         ftr_lst=[]
-        for cls in range(0,14):
+        for cls in range(0,15):
             ftr=self.ftr_lyr[cls](x)
             ftr_lst.append(torch.unsqueeze(ftr, dim=1))
             prd=self.cls_lyr[cls](ftr)
