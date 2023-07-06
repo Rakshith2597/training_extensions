@@ -45,7 +45,7 @@ if __name__ == '__main__':
                         default=15, help='Max number of epochs to run')
     parser.add_argument('--gpu', type=str, help='Want GPU ?', required=False, default='False')
     parser.add_argument('--checkpoint', type=str,
-                        required=False, help='Path of model weights to load for resuming training')
+                        required=False, help='Path of model weights to load for resuming training', default='')
     parser.add_argument('--gnn', type=str, help='using gnn or not?',
                         required=False, default='False')
     parser.add_argument('--backbone', type=str, required=False, default='resnet',

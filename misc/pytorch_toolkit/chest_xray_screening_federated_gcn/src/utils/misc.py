@@ -5,8 +5,8 @@ import copy
 def compute_edge_attr(A):
     edge=[]
     edge_attr=[]
-    for j in range(0,14):
-        for k in range(0,14):
+    for j in range(0,15):
+        for k in range(0,15):
             if j==k:
                 continue
             edge.append(np.array([j,k]))
@@ -38,17 +38,17 @@ def compute_adjacency_matrix(adj_type, site, split_npz='/storage/aneesh/split.np
         idx=np.where((clstr_assgn==site) & (trn_val_tst==0))[0]
     gt=gt[idx]
 
-    kappa=np.zeros((14,14))
-    TP=np.zeros((14,14))
-    TN=np.zeros((14,14))
-    FP=np.zeros((14,14))
-    FN=np.zeros((14,14))
-    kappa=np.zeros((14,14))
-    agree=np.zeros((14,14))
+    kappa=np.zeros((15,15))
+    TP=np.zeros((15,15))
+    TN=np.zeros((15,15))
+    FP=np.zeros((15,15))
+    FN=np.zeros((15,15))
+    kappa=np.zeros((15,15))
+    agree=np.zeros((15,15))
 
-    for j in range(0,14):
+    for j in range(0,15):
         gt_j=gt[j]
-        for k in range(0, 14):
+        for k in range(0,15):
             gt_k=gt[k]
 
             ## Kappa and agree are symmetric ie., A(i,j)=A(j,i)
